@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { IconCopy, IconMoon, IconSun } from "./icons";
 
 // Browser storage can throw (private windows, blocked site data): every
@@ -56,7 +57,11 @@ const SECTIONS = [
 
 export function Nav() {
   const [active, setActive] = useState<string>("");
+  // The header lives in the layout and outlasts page changes: re-find the
+  // sections whenever the page changes.
+  const pathname = usePathname();
   useEffect(() => {
+    setActive("");
     const els = SECTIONS.map(([id]) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
     if (!els.length) return;
     const io = new IntersectionObserver(
@@ -67,7 +72,7 @@ export function Nav() {
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, []);
+  }, [pathname]);
   return (
     <nav className="nav" aria-label="Sections">
       {SECTIONS.map(([id, label]) => (
@@ -120,8 +125,11 @@ export function CopyEmail({ email, className = "btn" }: { email: string; classNa
 /* ---------- Reveal sections as they scroll in ---------- */
 
 export function RevealObserver() {
+  // Mounted once in the layout, so it must look again after every page
+  // change: a page reached by client-side navigation brings new sections.
+  const pathname = usePathname();
   useEffect(() => {
-    const els = document.querySelectorAll<HTMLElement>("[data-reveal]");
+    const els = document.querySelectorAll<HTMLElement>("[data-reveal]:not(.in)");
     if (!("IntersectionObserver" in window)) {
       els.forEach((el) => el.classList.add("in"));
       return;
@@ -139,6 +147,6 @@ export function RevealObserver() {
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, []);
+  }, [pathname]);
   return null;
 }
