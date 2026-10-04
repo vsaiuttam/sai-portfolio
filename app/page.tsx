@@ -6,7 +6,8 @@ import projectsData from "@/data/projects.json";
 import skillsData from "@/data/skills.json";
 import type { Experience, Project, Skills } from "@/lib/types";
 import { getRepos, LANG_COLOURS } from "@/lib/github";
-import { BrushBreak, Panel, Tanzaku } from "@/components/ui";
+import { BrushBreak, Panel } from "@/components/ui";
+import Portrait from "@/components/portrait";
 import { CopyEmail, FlipText } from "@/components/client";
 import Garden from "@/components/garden";
 import { IconArrow, IconBriefcase, IconFile, IconGithub, IconLinkedin, IconMail, IconPin, IconStar } from "@/components/icons";
@@ -87,16 +88,7 @@ export default async function Home() {
             </a>
           </div>
         </div>
-        <div className="portrait" {...rise(2)}>
-          <span className="ring" aria-hidden="true" />
-          <div className="marumado">
-            <picture>
-              <source srcSet={profile.photo} type="image/webp" />
-              <img src={profile.photoFallback} alt={profile.photoAlt} width={720} height={960} fetchPriority="high" />
-            </picture>
-          </div>
-          <Tanzaku />
-        </div>
+        <Portrait />
       </section>
 
       <Garden />

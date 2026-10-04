@@ -3,9 +3,11 @@
 Personal site with a Japanese design: kinari cream and ai-zome indigo by day,
 an indigo night in dark mode, an ensō brush mark, section names in kanji set
 vertically (tategaki), a portrait seen through a round marumado window with a
-tanzaku strip, and a karesansui zen garden in the hero: raked sand around
-stones that you rake yourself by moving across it, while the wind smooths your
-lines away. Moving between pages means passing through a noren curtain that
+tanzaku strip (tap the photo: 変身, it turns anime and a straw hat drops on),
+and a karesansui zen garden to play in: rake the sand, stamp rings, set and
+drag stones, scatter momiji, sweep it clean, light the lantern, tip the
+shishi-odoshi, and meet the calico cat that wanders through. Sounds are
+synthesised in the browser and start muted. Moving between pages means passing through a noren curtain that
 carries 履歴書 (résumé) or 作品集 (portfolio).
 
 Built with Next.js (App Router), no UI or animation libraries.

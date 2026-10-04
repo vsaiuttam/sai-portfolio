@@ -421,6 +421,12 @@ a {
 }
 .marumado {
   position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
   aspect-ratio: 1;
   border-radius: 50%;
   overflow: hidden;
@@ -432,6 +438,109 @@ a {
   height: 100%;
   object-fit: cover;
   object-position: 50% 14%;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.marumado:hover img {
+  transform: scale(1.03);
+}
+/* The anime side, revealed by a slanted wipe that follows the ink brush. */
+.marumado .anime {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 0 0, -30% 100%, -30% 100%);
+  transition: clip-path 0.7s cubic-bezier(0.7, 0, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.portrait[data-anime="true"] .marumado .anime {
+  clip-path: polygon(0 0, 130% 0, 100% 100%, -30% 100%);
+}
+.ink-sweep {
+  position: absolute;
+  top: -10%;
+  bottom: -10%;
+  left: -40%;
+  width: 26%;
+  z-index: 2;
+  background: linear-gradient(90deg, transparent, rgb(20 22 34 / 0.9) 30%, rgb(20 22 34 / 0.95) 60%, transparent);
+  filter: url(#ink);
+  transform: skewX(-17deg);
+  animation: sweep 0.7s cubic-bezier(0.7, 0, 0.2, 1) forwards;
+  pointer-events: none;
+}
+@keyframes sweep {
+  to {
+    left: 120%;
+  }
+}
+/* The straw hat, waiting above the frame until the transformation. */
+.hat {
+  position: absolute;
+  left: 9%;
+  top: -6%;
+  width: 56%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-120%) rotate(-28deg);
+  transition: transform 0.35s ease-in, opacity 0.25s ease-in;
+}
+.hat svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 6px 6px rgb(0 0 0 / 0.25));
+}
+.portrait[data-anime="true"] .hat {
+  opacity: 1;
+  transform: rotate(-7deg);
+  transition: transform 0.7s cubic-bezier(0.34, 1.7, 0.6, 1) 0.4s, opacity 0.15s linear 0.4s;
+}
+.don {
+  position: absolute;
+  right: -1.2rem;
+  top: 6%;
+  z-index: 4;
+  font-family: var(--font-ja);
+  font-weight: 900;
+  font-size: 1.9rem;
+  color: rgb(var(--beni));
+  -webkit-text-stroke: 1.5px #fff;
+  paint-order: stroke;
+  pointer-events: none;
+  animation: don 1.4s cubic-bezier(0.2, 1.4, 0.4, 1) 0.55s both;
+}
+@keyframes don {
+  0% {
+    transform: scale(0) rotate(-30deg);
+    opacity: 0;
+  }
+  25% {
+    transform: scale(1.35) rotate(-12deg);
+    opacity: 1;
+  }
+  40%,
+  75% {
+    transform: scale(1) rotate(-12deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(-12deg) translateY(-6px);
+    opacity: 0;
+  }
+}
+.henshin {
+  position: absolute;
+  left: 50%;
+  bottom: -1.5rem;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 0.72rem;
+  color: rgb(var(--ink-faint));
+  pointer-events: none;
+}
+.henshin b {
+  font-family: var(--font-ja);
+  color: rgb(var(--ai));
+  margin-right: 0.2rem;
 }
 /* Faint bamboo blind across the lower part of the window. */
 .marumado::after {
@@ -503,17 +612,29 @@ a {
 
 /* ---------- Zen garden ---------- */
 
+.garden-wrap {
+  margin: 0.5rem 0 1rem;
+}
 .garden {
   position: relative;
-  height: 15rem;
-  margin: 0.5rem 0 1rem;
-  border-radius: 4px;
+  height: 18rem;
+  border-radius: 4px 4px 0 0;
   overflow: hidden;
   background: rgb(var(--sand));
-  /* A wooden engawa edge along the top and bottom. */
-  box-shadow: 0 0 0 1px rgb(var(--ink) / 0.1), 0 -6px 0 0 rgb(var(--card)), 0 -7px 0 0 rgb(var(--ink) / 0.12);
+  box-shadow: 0 0 0 1px rgb(var(--ink) / 0.1);
   touch-action: pan-y;
   cursor: crosshair;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.garden[data-tool="ring"] {
+  cursor: cell;
+}
+.garden[data-tool="stone"] {
+  cursor: grab;
+}
+.garden[data-tool="leaf"] {
+  cursor: copy;
 }
 .garden canvas {
   position: absolute;
@@ -521,36 +642,93 @@ a {
   width: 100%;
   height: 100%;
 }
-.garden-caption {
-  position: absolute;
-  left: 0.8rem;
-  bottom: 0.7rem;
+/* The engawa: a wooden veranda edge holding the tools. */
+.garden-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.3rem 0.7rem;
-  border-radius: 4px;
-  background: rgb(var(--paper) / 0.78);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  font-size: 0.78rem;
-  color: rgb(var(--ink-soft));
-  pointer-events: none;
+  justify-content: space-between;
+  gap: 0.6rem 1rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(rgb(var(--card)), rgb(var(--card))), repeating-linear-gradient(90deg, rgb(var(--ink) / 0.04) 0 2px, transparent 2px 9px);
+  background-blend-mode: multiply;
+  border: 1px solid rgb(var(--ink) / 0.1);
+  border-top: 3px solid rgb(var(--ink) / 0.14);
 }
-.garden-caption b {
+.garden-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  min-width: 0;
+  font-size: 0.78rem;
+  color: rgb(var(--ink-faint));
+}
+.garden-title b {
   font-family: var(--font-ja);
-  font-weight: 700;
+  font-size: 0.95rem;
   color: rgb(var(--ink));
 }
-.garden-caption .hint {
-  color: rgb(var(--ink-faint));
+.garden-title .hint {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.garden-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.gtool {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 3rem;
+  padding: 0.3rem 0.45rem 0.25rem;
+  border-radius: 4px;
+  border: 1px solid rgb(var(--ink) / 0.12);
+  background: rgb(var(--paper));
+  color: rgb(var(--ink-soft));
+  font: inherit;
+  cursor: pointer;
+  line-height: 1.1;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+}
+.gtool b {
+  font-family: var(--font-ja);
+  font-size: 1rem;
+  font-weight: 700;
+}
+.gtool span {
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+}
+.gtool:hover {
+  border-color: rgb(var(--ai) / 0.5);
+  color: rgb(var(--ink));
+}
+.gtool:active {
+  transform: scale(0.95);
+}
+.gtool[aria-pressed="true"] {
+  background: rgb(var(--ai));
+  border-color: rgb(var(--ai));
+  color: rgb(var(--paper));
 }
 @media (max-width: 520px) {
   .garden {
-    height: 12rem;
+    height: 14rem;
   }
-  .garden-caption .hint {
-    display: none;
+  .garden-title .hint {
+    white-space: normal;
+  }
+  .garden-tools {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .gtool {
+    flex: 1;
+    min-width: 0;
   }
 }
 
