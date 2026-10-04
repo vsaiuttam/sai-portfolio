@@ -146,6 +146,15 @@ export const sound = {
     if (!enabled) return;
     noise("highpass", 3200, 0.7, 0.12, 0.01, 0.16);
   },
+  /** Square-wave blips climbing a pentatonic scale, one per wave of tiles. */
+  blips(count: number, startMs: number, stepMs: number) {
+    if (!enabled) return;
+    const scale = [523, 587, 659, 784, 880, 1047, 1175, 1319, 1568, 1760];
+    for (let i = 0; i < count; i++) {
+      const f = scale[Math.min(scale.length - 1, Math.round((i / Math.max(1, count - 1)) * (scale.length - 1)))];
+      tone("square", f, f, 0.05, 0.004, 0.06, (startMs + i * stepMs) / 1000);
+    }
+  },
   broom() {
     if (!enabled) return;
     noise("bandpass", 700, 0.8, 0.18, 0.08, 1.1, 2600);

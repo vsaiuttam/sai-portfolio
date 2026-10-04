@@ -1,11 +1,12 @@
-"""Make the anime side of the portrait (public/sai-anime.webp).
+"""Cut the person out of the photo (mask.png, used by scripts/pixel.py), and
+make a cel-shaded anime version of them (toon2.png; no longer on the site).
 
     python scripts/anime.py <original-photo.jpg> <output-dir>
 
 Cuts the person out with GrabCut (seeded with a rough person shape for this
 photo), cel-shades them (flattened detail, posterised lightness, natural
 hue), draws ink outlines, and sets them against a flat anime sky. Writes
-toon2.png; convert it to webp for the site. The crop and seed shapes are
+The crop and seed shapes are
 tuned to this one photo.
 """
 import cv2, numpy as np, sys

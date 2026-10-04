@@ -443,89 +443,17 @@ a {
 .marumado:hover img {
   transform: scale(1.03);
 }
-/* The anime side, revealed by a slanted wipe that follows the ink brush. */
-.marumado .anime {
+/* The pixel-art twin, and the canvas that plays the flip between them. */
+.marumado .twin,
+.marumado .flipper {
   position: absolute;
   inset: 0;
-  clip-path: polygon(0 0, 0 0, -30% 100%, -30% 100%);
-  transition: clip-path 0.7s cubic-bezier(0.7, 0, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.portrait[data-anime="true"] .marumado .anime {
-  clip-path: polygon(0 0, 130% 0, 100% 100%, -30% 100%);
-}
-.ink-sweep {
-  position: absolute;
-  top: -10%;
-  bottom: -10%;
-  left: -40%;
-  width: 26%;
-  z-index: 2;
-  background: linear-gradient(90deg, transparent, rgb(20 22 34 / 0.9) 30%, rgb(20 22 34 / 0.95) 60%, transparent);
-  filter: url(#ink);
-  transform: skewX(-17deg);
-  animation: sweep 0.7s cubic-bezier(0.7, 0, 0.2, 1) forwards;
-  pointer-events: none;
-}
-@keyframes sweep {
-  to {
-    left: 120%;
-  }
-}
-/* The straw hat, waiting above the frame until the transformation. */
-.hat {
-  position: absolute;
-  left: 9%;
-  top: -6%;
-  width: 56%;
-  z-index: 3;
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(-120%) rotate(-28deg);
-  transition: transform 0.35s ease-in, opacity 0.25s ease-in;
-}
-.hat svg {
-  display: block;
   width: 100%;
-  height: auto;
-  filter: drop-shadow(0 6px 6px rgb(0 0 0 / 0.25));
+  height: 100%;
+  image-rendering: pixelated;
 }
-.portrait[data-anime="true"] .hat {
-  opacity: 1;
-  transform: rotate(-7deg);
-  transition: transform 0.7s cubic-bezier(0.34, 1.7, 0.6, 1) 0.4s, opacity 0.15s linear 0.4s;
-}
-.don {
-  position: absolute;
-  right: -1.2rem;
-  top: 6%;
-  z-index: 4;
-  font-family: var(--font-ja);
-  font-weight: 900;
-  font-size: 1.9rem;
-  color: rgb(var(--beni));
-  -webkit-text-stroke: 1.5px #fff;
-  paint-order: stroke;
-  pointer-events: none;
-  animation: don 1.4s cubic-bezier(0.2, 1.4, 0.4, 1) 0.55s both;
-}
-@keyframes don {
-  0% {
-    transform: scale(0) rotate(-30deg);
-    opacity: 0;
-  }
-  25% {
-    transform: scale(1.35) rotate(-12deg);
-    opacity: 1;
-  }
-  40%,
-  75% {
-    transform: scale(1) rotate(-12deg);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1) rotate(-12deg) translateY(-6px);
-    opacity: 0;
-  }
+.marumado .flipper {
+  transform: none !important;
 }
 .henshin {
   position: absolute;
