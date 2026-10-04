@@ -3,22 +3,20 @@
 import { useEffect, useRef, useState } from "react";
 import profile from "@/data/profile.json";
 import { sound } from "@/lib/sound";
-import { drawSprite, SPRITE } from "@/lib/sprite";
+import Boy from "./boy";
 import { Tanzaku } from "./ui";
 
 /*
-  The portrait has a second self: a pixel-art character in a straw hat
-  (lib/sprite.ts). Tapping the window (変身, henshin, "transform") plays
-  like an old game cartridge: the photo crunches into big pixels, the tiles
-  flip over in a diagonal wave to reveal the character, and a little
-  fanfare plays. Once there, the character blinks, breathes and now and
-  then tips its hat. Tapping again plays it all back to the photo.
+  The portrait has another side: a cartoon boy at his laptop (components/
+  boy.tsx). Tapping the window (変身, henshin, "transform") plays like an
+  old game cartridge: the photo crunches into big pixels, the tiles flip
+  over in a diagonal wave, and the cartoon sharpens into view to a little
+  fanfare. Tapping again plays it all back to the photo.
 */
 
 const TILES = 8; // tiles per side while flipping
 const FLIP_RES = TILES * 2; // pixels per side mid-transition (2×2 per tile)
 const START_RES = 44; // pixels per side as the crunch begins
-const GRID = SPRITE.length; // the character's pixels per side
 
 const CRUNCH = 380;
 const WAVE_STEP = 42;
@@ -29,66 +27,34 @@ const END = FLIP_END + 420;
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
 
-type Source = { img: CanvasImageSource; sx: number; sy: number; s: number; crisp: boolean };
+type Source = { img: CanvasImageSource; sx: number; sy: number; s: number };
 
 export default function Portrait() {
   const [twin, setTwin] = useState(false);
   const [playing, setPlaying] = useState(false);
   const photoRef = useRef<HTMLImageElement>(null);
-  const charRef = useRef<HTMLCanvasElement>(null);
+  const boyRef = useRef<SVGSVGElement>(null);
+  const boyImg = useRef<HTMLImageElement | null>(null);
   const flipRef = useRef<HTMLCanvasElement>(null);
   const raf = useRef(0);
-  const idleRaf = useRef(0);
-  useEffect(
-    () => () => {
-      cancelAnimationFrame(raf.current);
-      cancelAnimationFrame(idleRaf.current);
-    },
-    [],
-  );
+  useEffect(() => () => cancelAnimationFrame(raf.current), []);
 
-  // The character at rest, one canvas pixel per sprite pixel.
-  const still = () => {
-    const c = document.createElement("canvas");
-    c.width = c.height = GRID;
-    drawSprite(c.getContext("2d")!, 1);
-    return c;
-  };
-
-  // The living character: blinks, breathes, tips its hat now and then.
+  // A still raster of the cartoon, for the canvas to flip to.
   useEffect(() => {
-    const c = charRef.current;
-    if (!c) return;
-    const ctx = c.getContext("2d")!;
-    const px = 8;
-    c.width = c.height = GRID * px;
-    drawSprite(ctx, px);
-    if (!twin || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t0 = performance.now();
-    let last = "";
-    const loop = (now: number) => {
-      const t = (now - t0) / 1000;
-      const blink = t % 3.7 > 3.55 || (t % 11 > 10.4 && t % 11 < 10.55);
-      const bob = Math.sin(t * 2.4) > 0.55 ? 1 : 0;
-      const cycle = t % 9;
-      const hat = cycle > 5 && cycle < 6 ? (cycle < 5.12 || cycle > 5.88 ? 1 : cycle < 5.25 || cycle > 5.75 ? 2 : 3) : 0;
-      const key = `${blink}${bob}${hat}`;
-      if (key !== last) {
-        last = key;
-        ctx.clearRect(0, 0, c.width, c.height);
-        drawSprite(ctx, px, { blink, bob, hat });
-      }
-      idleRaf.current = requestAnimationFrame(loop);
-    };
-    idleRaf.current = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(idleRaf.current);
-  }, [twin]);
+    const svg = boyRef.current;
+    if (!svg) return;
+    const src = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    img.decoding = "async";
+    img.onload = () => (boyImg.current = img);
+    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(src)}`;
+  }, []);
 
   const shrink = (src: Source, n: number, into?: HTMLCanvasElement) => {
     const c = into ?? document.createElement("canvas");
     c.width = c.height = n;
     const x = c.getContext("2d")!;
-    x.imageSmoothingEnabled = !src.crisp;
+    x.imageSmoothingEnabled = true;
     x.drawImage(src.img, src.sx, src.sy, src.s, src.s, 0, 0, n, n);
     return c;
   };
@@ -96,21 +62,23 @@ export default function Portrait() {
   const toggle = () => {
     if (playing) return;
     const photo = photoRef.current,
+      boy = boyImg.current,
       canvas = flipRef.current;
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const goingToChar = !twin;
-    if (reduce || !photo?.complete || !photo.naturalWidth || !canvas) {
-      sound.land(goingToChar);
+    const goingToBoy = !twin;
+    if (reduce || !photo?.complete || !photo.naturalWidth || !boy || !canvas) {
+      sound.land(goingToBoy);
       setTwin((v) => !v);
       return;
     }
     const pw = photo.naturalWidth,
       ph = photo.naturalHeight,
       ps = Math.min(pw, ph);
-    const photoSrc: Source = { img: photo, sx: (pw - ps) / 2, sy: (ph - ps) * 0.14, s: ps, crisp: false };
-    const charSrc: Source = { img: still(), sx: 0, sy: 0, s: GRID, crisp: true };
-    const from = goingToChar ? photoSrc : charSrc;
-    const to = goingToChar ? charSrc : photoSrc;
+    const photoSrc: Source = { img: photo, sx: (pw - ps) / 2, sy: (ph - ps) * 0.14, s: ps };
+    const bs = boy.naturalWidth || 200;
+    const boySrc: Source = { img: boy, sx: 0, sy: 0, s: bs };
+    const from = goingToBoy ? photoSrc : boySrc;
+    const to = goingToBoy ? boySrc : photoSrc;
 
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const W = Math.round(canvas.getBoundingClientRect().width * dpr);
@@ -122,14 +90,11 @@ export default function Portrait() {
     const tile = W / TILES;
     const cell = FLIP_RES / TILES;
 
-    const clear = (src: Source) => {
-      ctx.imageSmoothingEnabled = !src.crisp;
-      ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(src.img, src.sx, src.sy, src.s, src.s, 0, 0, W, W);
-    };
     // The picture with a blocky copy faded over it; at 0 it's the clear image.
     const blocky = (src: Source, amount: number) => {
-      clear(src);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(src.img, src.sx, src.sy, src.s, src.s, 0, 0, W, W);
       if (amount <= 0) return;
       const n = Math.round(START_RES + (FLIP_RES - START_RES) * amount);
       ctx.globalAlpha = Math.min(1, amount * 2.4);
@@ -168,8 +133,8 @@ export default function Portrait() {
     };
 
     sound.crunch(CRUNCH);
-    sound.blips(TILES * 2 - 1, CRUNCH, WAVE_STEP, goingToChar);
-    sound.land(goingToChar, FLIP_END);
+    sound.blips(TILES * 2 - 1, CRUNCH, WAVE_STEP, goingToBoy);
+    sound.land(goingToBoy, FLIP_END);
     setPlaying(true);
     const t0 = performance.now();
     const frame = (now: number) => {
@@ -184,9 +149,7 @@ export default function Portrait() {
         scanlines(1);
       } else if (t < END) {
         const p = ease(clamp01((t - FLIP_END) / (END - FLIP_END)));
-        // The character is pixel art already: it lands crisp.
-        if (to.crisp) clear(to);
-        else blocky(to, 1 - p);
+        blocky(to, 1 - p);
         scanlines(1 - p);
       } else {
         setTwin((v) => !v);
@@ -206,13 +169,15 @@ export default function Portrait() {
         className="marumado"
         onClick={toggle}
         aria-pressed={twin}
-        aria-label={`Portrait of ${profile.name}. Tap to switch between the photo and a pixel-art character.`}
+        aria-label={`Portrait of ${profile.name}. Tap to switch to a cartoon of a boy at his laptop.`}
       >
         <picture>
           <source srcSet={profile.photo} type="image/webp" />
           <img ref={photoRef} src={profile.photoFallback} alt="" width={720} height={960} fetchPriority="high" style={{ opacity: twin ? 0 : 1 }} />
         </picture>
-        <canvas ref={charRef} className="twin" aria-hidden="true" style={{ opacity: twin ? 1 : 0 }} />
+        <span className="twin" style={{ opacity: twin ? 1 : 0 }} data-live={twin}>
+          <Boy ref={boyRef} />
+        </span>
         <canvas ref={flipRef} className="flipper" aria-hidden="true" style={{ visibility: playing ? "visible" : "hidden" }} />
       </button>
       <Tanzaku />

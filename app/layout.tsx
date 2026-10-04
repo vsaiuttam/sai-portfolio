@@ -6,6 +6,7 @@ import { MobileMenu, Nav, RevealObserver, Shortcuts, ShortcutsButton, SoundToggl
 import { IconGithub, IconLinkedin, IconMail } from "@/components/icons";
 import Noren from "@/components/noren";
 import Visitors from "@/components/visitors";
+import Petals from "@/components/petals";
 import "./globals.css";
 
 // Zen Old Mincho carries both the Latin headings and the kanji; the browser
@@ -64,6 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <InkFilter />
+        <Petals />
         <a href="#main" className="skip">
           Skip to content
         </a>

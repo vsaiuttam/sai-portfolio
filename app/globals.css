@@ -114,6 +114,21 @@ a {
   border-radius: 4px;
 }
 
+/* Live wallpaper: petals behind everything; content sits above them. */
+.petals {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+main,
+.footer {
+  position: relative;
+  z-index: 1;
+}
+
 .skip {
   position: absolute;
   left: -999px;
@@ -585,17 +600,152 @@ kbd {
 .marumado:hover img {
   transform: scale(1.03);
 }
-/* The pixel-art twin, and the canvas that plays the flip between them. */
+/* The cartoon twin, and the canvas that plays the flip between them. */
 .marumado .twin,
 .marumado .flipper {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  image-rendering: pixelated;
 }
-.marumado .flipper {
-  transform: none !important;
+.marumado .twin {
+  display: block;
+  transition: opacity 0.15s;
+}
+.boy {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.boy * {
+  transform-box: fill-box;
+}
+/* Motion runs only while the cartoon is showing. */
+.twin[data-live="true"] .boy-eyes {
+  transform-origin: center;
+  animation: boy-blink 4.2s infinite;
+}
+.twin[data-live="true"] .boy-head {
+  transform-origin: 50% 100%;
+  animation: boy-nod 1.8s ease-in-out infinite;
+}
+.twin[data-live="true"] .boy-screenlight {
+  animation: boy-flicker 2.6s ease-in-out infinite;
+}
+.twin[data-live="true"] .boy-hand-l {
+  animation: boy-type 0.3s ease-in-out infinite alternate;
+}
+.twin[data-live="true"] .boy-hand-r {
+  animation: boy-type 0.3s ease-in-out 0.15s infinite alternate;
+}
+.boy-code,
+.boy-steam,
+.boy-petal {
+  opacity: 0;
+}
+.twin[data-live="true"] .boy-code {
+  animation: boy-code 3.6s ease-out infinite;
+}
+.twin[data-live="true"] .boy-code.c2 {
+  animation-delay: 1.2s;
+}
+.twin[data-live="true"] .boy-code.c3 {
+  animation-delay: 2.4s;
+}
+.twin[data-live="true"] .boy-steam {
+  animation: boy-steam 2.4s ease-in-out infinite;
+}
+.twin[data-live="true"] .boy-steam.s2 {
+  animation-delay: 1.2s;
+}
+.twin[data-live="true"] .boy-petal {
+  animation: boy-petal 6s linear infinite;
+}
+.twin[data-live="true"] .boy-petal.p2 {
+  animation-delay: 2s;
+}
+.twin[data-live="true"] .boy-petal.p3 {
+  animation-delay: 4s;
+}
+@keyframes boy-blink {
+  0%,
+  90%,
+  96%,
+  100% {
+    transform: scaleY(1);
+  }
+  93% {
+    transform: scaleY(0.1);
+  }
+}
+@keyframes boy-nod {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-2deg) translateY(1.5px);
+  }
+}
+@keyframes boy-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0.55;
+  }
+  70% {
+    opacity: 0.85;
+  }
+}
+@keyframes boy-type {
+  to {
+    transform: translateY(-2.5px);
+  }
+}
+@keyframes boy-code {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.8);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(-8px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-62px) scale(1.05);
+  }
+}
+@keyframes boy-steam {
+  0% {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  40% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+@keyframes boy-petal {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  10% {
+    opacity: 0.95;
+  }
+  90% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(26px, 175px) rotate(320deg);
+  }
 }
 .henshin {
   position: absolute;
