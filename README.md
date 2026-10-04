@@ -4,8 +4,8 @@ Personal site with a Japanese design: kinari cream and ai-zome indigo by day,
 an indigo night in dark mode, an ensō brush mark, section names in kanji set
 vertically (tategaki), a portrait seen through a round marumado window with a
 tanzaku strip (tap the photo, 変身: it crunches into pixels and flips, tile by
-tile, into a cartoon boy at his laptop who blinks, types and nods while code
-floats up; components/boy.tsx), sakura petals drifting behind the whole page
+tile, into a lo-fi pixel scene of a developer coding at night: code scrolls,
+he types, the city twinkles; lib/pixelScene.ts), sakura petals drifting behind the whole page
 as a live wallpaper (components/petals.tsx),
 and a karesansui zen garden to play in: rake the sand, stamp rings, set and
 drag stones, scatter momiji, sweep it clean, light the lantern, tip the

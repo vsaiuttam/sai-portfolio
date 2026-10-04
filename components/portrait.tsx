@@ -3,15 +3,16 @@
 import { useEffect, useRef, useState } from "react";
 import profile from "@/data/profile.json";
 import { sound } from "@/lib/sound";
-import Boy from "./boy";
+import { drawScene, GRID } from "@/lib/pixelScene";
 import { Tanzaku } from "./ui";
 
 /*
-  The portrait has another side: a cartoon boy at his laptop (components/
-  boy.tsx). Tapping the window (変身, henshin, "transform") plays like an
-  old game cartridge: the photo crunches into big pixels, the tiles flip
-  over in a diagonal wave, and the cartoon sharpens into view to a little
-  fanfare. Tapping again plays it all back to the photo.
+  The portrait has another side: a lo-fi pixel scene of a developer coding
+  late at night (lib/pixelScene.ts). Tapping the window (変身, henshin,
+  "transform") plays like an old game cartridge: the photo crunches into
+  big pixels, the tiles flip over in a diagonal wave, and the scene lands
+  crisp to a little fanfare, then lives: code scrolls, he types and blinks,
+  the city twinkles, the mug steams. Tapping again plays it back.
 */
 
 const TILES = 8; // tiles per side while flipping
@@ -27,34 +28,52 @@ const END = FLIP_END + 420;
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
 
-type Source = { img: CanvasImageSource; sx: number; sy: number; s: number };
+type Source = { img: CanvasImageSource; sx: number; sy: number; s: number; crisp?: boolean };
 
 export default function Portrait() {
   const [twin, setTwin] = useState(false);
   const [playing, setPlaying] = useState(false);
   const photoRef = useRef<HTMLImageElement>(null);
-  const boyRef = useRef<SVGSVGElement>(null);
-  const boyImg = useRef<HTMLImageElement | null>(null);
+  const sceneRef = useRef<HTMLCanvasElement>(null);
   const flipRef = useRef<HTMLCanvasElement>(null);
   const raf = useRef(0);
   useEffect(() => () => cancelAnimationFrame(raf.current), []);
 
-  // A still raster of the cartoon, for the canvas to flip to.
+  // The living scene: drawn at 48×48, scaled up with hard pixel edges by CSS.
   useEffect(() => {
-    const svg = boyRef.current;
-    if (!svg) return;
-    const src = new XMLSerializer().serializeToString(svg);
-    const img = new Image();
-    img.decoding = "async";
-    img.onload = () => (boyImg.current = img);
-    img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(src)}`;
-  }, []);
+    const c = sceneRef.current;
+    if (!c) return;
+    const ctx = c.getContext("2d")!;
+    c.width = c.height = GRID;
+    drawScene(ctx, 0);
+    if (!twin || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t0 = performance.now();
+    let raf2 = 0,
+      last = 0;
+    const loop = (now: number) => {
+      if (now - last > 66) {
+        last = now;
+        drawScene(ctx, (now - t0) / 1000);
+      }
+      raf2 = requestAnimationFrame(loop);
+    };
+    raf2 = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf2);
+  }, [twin]);
+
+  // A still frame of the scene, for the canvas to flip to.
+  const still = () => {
+    const c = document.createElement("canvas");
+    c.width = c.height = GRID;
+    drawScene(c.getContext("2d")!, 0);
+    return c;
+  };
 
   const shrink = (src: Source, n: number, into?: HTMLCanvasElement) => {
     const c = into ?? document.createElement("canvas");
     c.width = c.height = n;
     const x = c.getContext("2d")!;
-    x.imageSmoothingEnabled = true;
+    x.imageSmoothingEnabled = !src.crisp;
     x.drawImage(src.img, src.sx, src.sy, src.s, src.s, 0, 0, n, n);
     return c;
   };
@@ -62,12 +81,11 @@ export default function Portrait() {
   const toggle = () => {
     if (playing) return;
     const photo = photoRef.current,
-      boy = boyImg.current,
       canvas = flipRef.current;
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const goingToBoy = !twin;
-    if (reduce || !photo?.complete || !photo.naturalWidth || !boy || !canvas) {
-      sound.land(goingToBoy);
+    const goingToScene = !twin;
+    if (reduce || !photo?.complete || !photo.naturalWidth || !canvas) {
+      sound.land(goingToScene);
       setTwin((v) => !v);
       return;
     }
@@ -75,10 +93,9 @@ export default function Portrait() {
       ph = photo.naturalHeight,
       ps = Math.min(pw, ph);
     const photoSrc: Source = { img: photo, sx: (pw - ps) / 2, sy: (ph - ps) * 0.14, s: ps };
-    const bs = boy.naturalWidth || 200;
-    const boySrc: Source = { img: boy, sx: 0, sy: 0, s: bs };
-    const from = goingToBoy ? photoSrc : boySrc;
-    const to = goingToBoy ? boySrc : photoSrc;
+    const sceneSrc: Source = { img: still(), sx: 0, sy: 0, s: GRID, crisp: true };
+    const from = goingToScene ? photoSrc : sceneSrc;
+    const to = goingToScene ? sceneSrc : photoSrc;
 
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const W = Math.round(canvas.getBoundingClientRect().width * dpr);
@@ -92,7 +109,7 @@ export default function Portrait() {
 
     // The picture with a blocky copy faded over it; at 0 it's the clear image.
     const blocky = (src: Source, amount: number) => {
-      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingEnabled = !src.crisp;
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(src.img, src.sx, src.sy, src.s, src.s, 0, 0, W, W);
       if (amount <= 0) return;
@@ -133,8 +150,8 @@ export default function Portrait() {
     };
 
     sound.crunch(CRUNCH);
-    sound.blips(TILES * 2 - 1, CRUNCH, WAVE_STEP, goingToBoy);
-    sound.land(goingToBoy, FLIP_END);
+    sound.blips(TILES * 2 - 1, CRUNCH, WAVE_STEP, goingToScene);
+    sound.land(goingToScene, FLIP_END);
     setPlaying(true);
     const t0 = performance.now();
     const frame = (now: number) => {
@@ -149,7 +166,8 @@ export default function Portrait() {
         scanlines(1);
       } else if (t < END) {
         const p = ease(clamp01((t - FLIP_END) / (END - FLIP_END)));
-        blocky(to, 1 - p);
+        // Pixel art lands crisp; the photo sharpens back.
+        blocky(to, to.crisp ? 0 : 1 - p);
         scanlines(1 - p);
       } else {
         setTwin((v) => !v);
@@ -169,15 +187,13 @@ export default function Portrait() {
         className="marumado"
         onClick={toggle}
         aria-pressed={twin}
-        aria-label={`Portrait of ${profile.name}. Tap to switch to a cartoon of a boy at his laptop.`}
+        aria-label={`Portrait of ${profile.name}. Tap to switch to a pixel-art scene of a developer coding at night.`}
       >
         <picture>
           <source srcSet={profile.photo} type="image/webp" />
           <img ref={photoRef} src={profile.photoFallback} alt="" width={720} height={960} fetchPriority="high" style={{ opacity: twin ? 0 : 1 }} />
         </picture>
-        <span className="twin" style={{ opacity: twin ? 1 : 0 }} data-live={twin}>
-          <Boy ref={boyRef} />
-        </span>
+        <canvas ref={sceneRef} className="twin" aria-hidden="true" style={{ opacity: twin ? 1 : 0 }} />
         <canvas ref={flipRef} className="flipper" aria-hidden="true" style={{ visibility: playing ? "visible" : "hidden" }} />
       </button>
       <Tanzaku />
