@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Zen_Old_Mincho } from "next/font/google";
 import profile from "@/data/profile.json";
-import { Enso, InkFilter } from "@/components/ui";
+import { InkFilter, Mark } from "@/components/ui";
 import { MobileMenu, Nav, RevealObserver, Shortcuts, ShortcutsButton, SoundToggle, ThemeToggle } from "@/components/client";
 import { IconGithub, IconLinkedin, IconMail } from "@/components/icons";
 import Noren from "@/components/noren";
+import Visitors from "@/components/visitors";
 import "./globals.css";
 
 // Zen Old Mincho carries both the Latin headings and the kanji; the browser
@@ -69,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <header className="header">
             <div className="wrap header-inner">
               <a href="/" className="brand" aria-label={`${profile.name}, home`}>
-                <Enso size={1.9} />
+                <Mark size={1.9} />
                 <span>{profile.shortName}</span>
               </a>
               <Nav />
@@ -85,7 +86,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="wrap">
               <div className="footer-top">
                 <a href="/" className="brand">
-                  <Enso size={1.6} />
+                  <Mark size={1.6} />
                   <span>{profile.name}</span>
                 </a>
                 <nav className="footer-links" aria-label="Elsewhere">
@@ -108,6 +109,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <span>
                   © {new Date().getFullYear()} {profile.name} · {profile.location}
                 </span>
+                <Visitors />
                 <span lang="ja" className="footer-ja">
                   一期一会 · <span lang="en">every meeting, once in a lifetime</span>
                 </span>

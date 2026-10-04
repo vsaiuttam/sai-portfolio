@@ -187,13 +187,14 @@ a {
   font-size: 1.05rem;
   white-space: nowrap;
 }
-.enso {
-  color: rgb(var(--ink));
+.mark {
   flex-shrink: 0;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border-radius: 22%;
+  box-shadow: 0 4px 10px -4px rgb(var(--shadow) / 0.45);
+  transition: transform 0.4s cubic-bezier(0.2, 1.4, 0.4, 1);
 }
-.brand:hover .enso {
-  transform: rotate(-25deg);
+.brand:hover .mark {
+  transform: rotate(-6deg) scale(1.06);
 }
 .nav {
   display: flex;
@@ -1446,6 +1447,25 @@ kbd {
   justify-content: space-between;
   gap: 1rem;
 }
+.visitors {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--ink) / 0.12);
+  font-size: 0.78rem;
+  animation: sheet 0.4s ease both;
+}
+.visitors b {
+  font-family: var(--font-ja);
+  color: rgb(var(--beni));
+}
+.visitors strong {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: rgb(var(--ink));
+}
 .footer-ja {
   font-family: var(--font-ja);
 }
@@ -1638,7 +1658,7 @@ kbd {
   place-items: center;
   text-align: center;
 }
-.lost .enso {
+.lost .mark {
   margin: 0 auto 1.2rem;
 }
 .lost h1 {

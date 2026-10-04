@@ -1,22 +1,27 @@
 import profile from "@/data/profile.json";
 
 /**
- * The mark: an ensō, the Zen circle painted in one breath, left open where
- * the brush lifted, with a beni dot where it first touched the paper.
+ * The mark: "SU" set in mincho on an ai-indigo tile, with a small red sun
+ * in the corner. Text is drawn as SVG so it stays sharp at any size.
  */
-export function Enso({ size = 2, className = "" }: { size?: number; className?: string }) {
+export function Mark({ size = 2, className = "" }: { size?: number; className?: string }) {
   return (
-    <svg className={`enso ${className}`} viewBox="0 0 64 64" width={`${size}rem`} height={`${size}rem`} aria-hidden="true">
-      <path
-        d="M41 9.5C28 5 13 12 10 27c-3 15 8 28 23 28 13 0 22-9 23-21 .6-7-2-13.5-6.5-17.8"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="6.5"
-        strokeLinecap="round"
-        filter="url(#ink)"
-      />
-      <path d="M49.5 16.2c-1.6-1.6-3.4-2.9-5.4-4" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity=".55" />
-      <circle cx="41.5" cy="9.6" r="3.3" fill="rgb(var(--beni))" />
+    <svg className={`mark ${className}`} viewBox="0 0 40 40" width={`${size}rem`} height={`${size}rem`} aria-hidden="true">
+      <rect width="40" height="40" rx="9" fill="rgb(31 47 88)" />
+      <rect x="2.5" y="2.5" width="35" height="35" rx="7" fill="none" stroke="rgb(255 255 255 / 0.18)" />
+      <text
+        x="20"
+        y="27.2"
+        textAnchor="middle"
+        fontFamily="var(--font-serif), Georgia, 'Times New Roman', serif"
+        fontWeight="700"
+        fontSize="19"
+        letterSpacing="-0.5"
+        fill="#f6f3ea"
+      >
+        SU
+      </text>
+      <circle cx="31.5" cy="8.5" r="3" fill="#e0523a" />
     </svg>
   );
 }

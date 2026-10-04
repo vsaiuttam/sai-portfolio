@@ -34,11 +34,29 @@ export default function OpenGraphImage() {
           </div>
           <div style={{ display: "flex", fontSize: 24, opacity: 0.7, fontFamily: "monospace" }}>{profile.site.replace("https://", "")}</div>
         </div>
-        {/* The ensō mark. */}
-        <svg width="260" height="260" viewBox="0 0 64 64" style={{ position: "absolute", right: 90, top: 185 }}>
-          <path d="M41 9.5C28 5 13 12 10 27c-3 15 8 28 23 28 13 0 22-9 23-21 .6-7-2-13.5-6.5-17.8" fill="none" stroke="#f3f1ea" strokeWidth="5" strokeLinecap="round" />
-          <circle cx="41.5" cy="9.6" r="3.2" fill="#e0523a" />
-        </svg>
+        {/* The SU mark. */}
+        <div
+          style={{
+            position: "absolute",
+            right: 100,
+            top: 195,
+            width: 240,
+            height: 240,
+            borderRadius: 54,
+            background: "#f6f3ea",
+            color: "#1f2f58",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 118,
+            fontWeight: 700,
+            fontFamily: "serif",
+            letterSpacing: -3,
+          }}
+        >
+          SU
+          <div style={{ position: "absolute", right: 30, top: 30, width: 34, height: 34, borderRadius: 17, background: "#e0523a" }} />
+        </div>
       </div>
     ),
     size,
