@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect x="4" y="4" width="56" height="56" rx="10" fill="#c53a24"/>
-  <rect x="9" y="9" width="46" height="46" rx="6" fill="none" stroke="#faf7f0" stroke-width="2" opacity=".7"/>
-  <text x="32" y="43" text-anchor="middle" font-family="Noto Serif Devanagari, Nirmala UI, Mangal, serif" font-weight="700" font-size="25" fill="#faf7f0">साई</text>
+  <rect width="64" height="64" rx="14" fill="#f7f4ec"/>
+  <path d="M41 9.5C28 5 13 12 10 27c-3 15 8 28 23 28 13 0 22-9 23-21 .6-7-2-13.5-6.5-17.8" fill="none" stroke="#1f2f58" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="41.5" cy="9.6" r="3.6" fill="#b92c36"/>
 </svg>

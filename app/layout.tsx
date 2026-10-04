@@ -1,14 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono, Noto_Serif_Devanagari, Shippori_Mincho } from "next/font/google";
+import { Inter, JetBrains_Mono, Zen_Old_Mincho } from "next/font/google";
 import profile from "@/data/profile.json";
-import { InkFilter, Seal } from "@/components/ui";
-import { Nav, RevealObserver, RituButton, RituProvider, ThemeToggle } from "@/components/client";
+import { Enso, InkFilter } from "@/components/ui";
+import { Nav, RevealObserver, ThemeToggle } from "@/components/client";
+import Noren from "@/components/noren";
 import "./globals.css";
 
-const mincho = Shippori_Mincho({ subsets: ["latin"], weight: ["600", "700", "800"], variable: "--f-mincho", display: "swap" });
+// Zen Old Mincho carries both the Latin headings and the kanji; the browser
+// only downloads the Japanese glyph ranges the page actually uses.
+const mincho = Zen_Old_Mincho({ subsets: ["latin"], weight: ["400", "600", "700", "900"], variable: "--f-mincho", display: "swap" });
 const inter = Inter({ subsets: ["latin"], variable: "--f-inter", display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--f-mono", display: "swap" });
-const deva = Noto_Serif_Devanagari({ subsets: ["devanagari"], weight: ["400", "600", "700"], variable: "--f-deva", display: "swap" });
 
 const description = `${profile.name}: ${profile.title} at ${profile.company} and AI engineer in ${profile.location}. ${profile.tagline}`;
 
@@ -31,8 +33,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf7f0" },
-    { media: "(prefers-color-scheme: dark)", color: "#12110f" },
+    { media: "(prefers-color-scheme: light)", color: "#f7f4ec" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e1321" },
   ],
 };
 
@@ -54,7 +56,7 @@ const personLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${mincho.variable} ${inter.variable} ${mono.variable} ${deva.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${mincho.variable} ${inter.variable} ${mono.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: boot }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
@@ -64,11 +66,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a href="#main" className="skip">
           Skip to content
         </a>
-        <RituProvider>
           <header className="header">
             <div className="wrap header-inner">
               <a href="/" className="brand" aria-label={`${profile.name}, home`}>
-                <Seal size={1.9} />
+                <Enso size={1.9} />
                 <span>{profile.shortName}</span>
               </a>
               <Nav />
@@ -81,10 +82,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span>
                 © {new Date().getFullYear()} {profile.name} · Hyderabad
               </span>
-              <RituButton />
+              <span lang="ja" className="footer-ja">
+                一期一会 · <span lang="en">every meeting, once in a lifetime</span>
+              </span>
             </div>
           </footer>
-        </RituProvider>
+          <Noren />
         <RevealObserver />
       </body>
     </html>

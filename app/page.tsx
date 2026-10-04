@@ -6,9 +6,9 @@ import projectsData from "@/data/projects.json";
 import skillsData from "@/data/skills.json";
 import type { Experience, Project, Skills } from "@/lib/types";
 import { getRepos, LANG_COLOURS } from "@/lib/github";
-import { Panel, Seal, WaveBreak } from "@/components/ui";
+import { BrushBreak, Panel, Tanzaku } from "@/components/ui";
 import { CopyEmail, FlipText } from "@/components/client";
-import Pond from "@/components/pond";
+import Garden from "@/components/garden";
 import { IconArrow, IconBriefcase, IconFile, IconGithub, IconLinkedin, IconMail, IconPin, IconStar } from "@/components/icons";
 
 // The GitHub shelf refreshes daily without a redeploy.
@@ -33,7 +33,7 @@ export default async function Home() {
       <section className="hero" aria-label="Introduction">
         <div>
           <p className="label" {...rise(0)}>
-            Namaste · नमस्ते
+            Hajimemashite · はじめまして
           </p>
           <h1 {...rise(1)}>
             {given.join(" ")}
@@ -88,21 +88,21 @@ export default async function Home() {
           </div>
         </div>
         <div className="portrait" {...rise(2)}>
-          <span className="frame" aria-hidden="true" />
-          <div className="arch">
+          <span className="ring" aria-hidden="true" />
+          <div className="marumado">
             <picture>
               <source srcSet={profile.photo} type="image/webp" />
               <img src={profile.photoFallback} alt={profile.photoAlt} width={720} height={960} fetchPriority="high" />
             </picture>
           </div>
-          <Seal size={3.4} />
+          <Tanzaku />
         </div>
       </section>
 
-      <Pond />
+      <Garden />
 
       {/* ---------- About ---------- */}
-      <Panel id="about" num="01" vert="परिचय" title="About" label="parichay · introduction">
+      <Panel id="about" num="01" vert="紹介" title="About" label="shōkai · introduction">
         <div className="prose">
           {about.paragraphs.map((p, i) => (
             <p key={i}>{p}</p>
@@ -118,14 +118,14 @@ export default async function Home() {
         </div>
       </Panel>
 
-      <WaveBreak />
+      <BrushBreak />
 
       {/* ---------- Now ---------- */}
-      <Panel id="now" num="02" vert="अभी" title="Now" label={`abhi · updated ${new Date(now.updated).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}`}>
+      <Panel id="now" num="02" vert="今" title="Now" label={`ima · updated ${new Date(now.updated).toLocaleDateString("en-IN", { month: "short", year: "numeric" })}`}>
         <ul className="now">
           {now.items.map((it) => (
             <li key={it.label}>
-              <span className="g" aria-hidden="true" lang="hi">
+              <span className="g" aria-hidden="true" lang="ja">
                 {it.glyph}
               </span>
               <div>
@@ -137,10 +137,10 @@ export default async function Home() {
         </ul>
       </Panel>
 
-      <WaveBreak />
+      <BrushBreak />
 
       {/* ---------- Experience ---------- */}
-      <Panel id="experience" num="03" vert="अनुभव" title="Experience" label="anubhav">
+      <Panel id="experience" num="03" vert="経歴" title="Experience" label="keireki · career">
         {experience.map((j) => (
           <article className="job" key={j.role + j.company}>
             <div className="job-head">
@@ -165,10 +165,10 @@ export default async function Home() {
         ))}
       </Panel>
 
-      <WaveBreak />
+      <BrushBreak />
 
       {/* ---------- Projects ---------- */}
-      <Panel id="projects" num="04" vert="कृतियाँ" title="Projects" label="kritiyan · things I've built">
+      <Panel id="projects" num="04" vert="作品" title="Projects" label="sakuhin · things I've built">
         <div className="projects">
           {projects.map((p, i) => (
             <article className={`project${i < 2 || (i === projects.length - 1 && (projects.length - 2) % 2 === 1) ? " wide" : ""}`} key={p.title}>
@@ -242,10 +242,10 @@ export default async function Home() {
         )}
       </Panel>
 
-      <WaveBreak />
+      <BrushBreak />
 
       {/* ---------- Skills ---------- */}
-      <Panel id="skills" num="05" vert="कौशल" title="Skills" label="kaushal">
+      <Panel id="skills" num="05" vert="技能" title="Skills" label="ginō">
         <div className="skills">
           {skills.groups.map((g) => (
             <div className="skill-row" key={g.name}>
@@ -280,13 +280,13 @@ export default async function Home() {
         </div>
       </Panel>
 
-      <WaveBreak />
+      <BrushBreak />
 
       {/* ---------- Contact ---------- */}
       <section id="contact" className="panel" aria-labelledby="contact-title" style={{ display: "block" }}>
         <div className="contact" data-reveal>
-          <span className="namaste" lang="hi">
-            संपर्क
+          <span className="contact-ja" lang="ja">
+            連絡 · renraku
           </span>
           <h2 id="contact-title" className="serif">
             Have a workflow that should run itself?

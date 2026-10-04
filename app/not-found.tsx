@@ -1,11 +1,11 @@
-import { Seal } from "@/components/ui";
+import { Enso } from "@/components/ui";
 
 export default function NotFound() {
   return (
     <main id="main" className="wrap lost">
       <div>
-        <Seal size={5} />
-        <h1>This page drifted off the pond</h1>
+        <Enso size={5} />
+        <h1>This path isn't raked yet</h1>
         <p>The link may be old, or the page has moved.</p>
         <a className="btn primary" href="/">
           Back home

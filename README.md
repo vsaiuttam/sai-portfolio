@@ -1,12 +1,12 @@
 # Sai Uttam Dutt Veeravajhula · Portfolio
 
-Personal site: an Indian twist on a Japanese washi-paper look. Sindoor red and
-indigo on paper by day, diya gold on sumi ink by night, a साई hanko seal, section
-names in Devanagari set vertically like tategaki, and a lotus pond in the hero
-that follows the six Indian seasons (ṛtu): marigold petals in Vasanta, sun glints
-in Grishma, monsoon rain in Varsha, fireflies in Sharad, floating diyas in
-Hemanta, mist and leaves in Shishira. Touch the water to make ripples; the button
-in the footer cycles the seasons.
+Personal site with a Japanese design: kinari cream and ai-zome indigo by day,
+an indigo night in dark mode, an ensō brush mark, section names in kanji set
+vertically (tategaki), a portrait seen through a round marumado window with a
+tanzaku strip, and a karesansui zen garden in the hero: raked sand around
+stones that you rake yourself by moving across it, while the wind smooths your
+lines away. Moving between pages means passing through a noren curtain that
+carries 履歴書 (résumé) or 作品集 (portfolio).
 
 Built with Next.js (App Router), no UI or animation libraries.
 

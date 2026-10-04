@@ -1,7 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { RITUS, RITU_META, rituFor, type Ritu } from "@/lib/ritu";
+import { useEffect, useState } from "react";
 import { IconCopy, IconMoon, IconSun } from "./icons";
 
 // Browser storage can throw (private windows, blocked site data): every
@@ -21,68 +20,6 @@ const store = {
     } catch {}
   },
 };
-
-/* ---------- Ritu (season) ---------- */
-
-const RituCtx = createContext<{ ritu: Ritu; next: () => void; auto: boolean }>({
-  ritu: "sharad",
-  next: () => {},
-  auto: true,
-});
-
-export function RituProvider({ children }: { children: React.ReactNode }) {
-  const [ritu, setRitu] = useState<Ritu>(() => rituFor());
-  const [auto, setAuto] = useState(true);
-  useEffect(() => {
-    const saved = store.get("ritu") as Ritu | null;
-    if (saved && RITUS.includes(saved)) {
-      setRitu(saved);
-      setAuto(false);
-    }
-  }, []);
-  const next = useCallback(() => {
-    setRitu((r) => {
-      const n = RITUS[(RITUS.indexOf(r) + 1) % RITUS.length];
-      // Cycling back to the real season clears the override.
-      if (n === rituFor()) {
-        store.set("ritu", null);
-        setAuto(true);
-      } else {
-        store.set("ritu", n);
-        setAuto(false);
-      }
-      return n;
-    });
-  }, []);
-  return <RituCtx.Provider value={{ ritu, next, auto }}>{children}</RituCtx.Provider>;
-}
-
-export const useRitu = () => useContext(RituCtx);
-
-export function RituButton() {
-  const { ritu, next, auto } = useRitu();
-  const m = RITU_META[ritu];
-  return (
-    <button type="button" className="ritu-btn" onClick={next} title="Change the season of the pond">
-      Ritu: <b lang="hi">{m.script}</b> {m.name}
-      {auto ? " (today)" : ""} <span aria-hidden="true">↻</span>
-    </button>
-  );
-}
-
-export function PondCaption() {
-  const { ritu } = useRitu();
-  const m = RITU_META[ritu];
-  return (
-    <div className="pond-caption" aria-live="polite">
-      <b lang="hi">{m.script}</b>
-      <span>
-        {m.name} · {m.mood}
-      </span>
-      <span className="hint">· touch the water</span>
-    </div>
-  );
-}
 
 /* ---------- Theme ---------- */
 
@@ -159,7 +96,7 @@ export function FlipText({ words, interval = 2600 }: { words: string[]; interval
   );
 }
 
-/* ---------- Copy email, with a little seal stamp ---------- */
+/* ---------- Copy email ---------- */
 
 export function CopyEmail({ email, className = "btn" }: { email: string; className?: string }) {
   const [done, setDone] = useState(false);

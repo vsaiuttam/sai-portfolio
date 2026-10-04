@@ -3,17 +3,17 @@
   "items": [
     {
       "label": "Building",
-      "glyph": "क",
+      "glyph": "作",
       "text": "Karta, a voice-first desktop agent that understands Hindi, Telugu and Hinglish, with a policy engine and kill switch so it never pays or sends without asking."
     },
     {
       "label": "Shipping",
-      "glyph": "स",
+      "glyph": "届",
       "text": "Samvaad, AI voice agents that place outbound calls, hold a natural conversation and write what was agreed to your calendar and records."
     },
     {
       "label": "Exploring",
-      "glyph": "ख",
+      "glyph": "探",
       "text": "Agents that run an Oracle Fusion implementation end to end: setups, regression testing, BI Publisher reports and cutover, all versioned like a Git repo."
     }
   ]
