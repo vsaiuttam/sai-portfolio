@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect x="4" y="4" width="56" height="56" rx="10" fill="#c53a24"/>
+  <rect x="9" y="9" width="46" height="46" rx="6" fill="none" stroke="#faf7f0" stroke-width="2" opacity=".7"/>
+  <text x="32" y="43" text-anchor="middle" font-family="Noto Serif Devanagari, Nirmala UI, Mangal, serif" font-weight="700" font-size="25" fill="#faf7f0">साई</text>
+</svg>

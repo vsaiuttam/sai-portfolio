@@ -1,0 +1,97 @@
+[
+  {
+    "title": "Samvaad",
+    "kind": "Personal · Live",
+    "year": "2026",
+    "description": "AI voice agents that sound human. Places outbound calls from a contact list, holds a natural conversation against a per-campaign goal, extracts what was agreed and writes it to calendar and records, with a human review gate on anything uncertain. Streaming STT → LLM → TTS kept under 800 ms a turn.",
+    "tags": [
+      "Python",
+      "Claude API",
+      "Voice AI",
+      "Telephony",
+      "Postgres",
+      "Next.js",
+      "PWA"
+    ],
+    "url": "https://frontend-nu-blond-93.vercel.app",
+    "repo": "https://github.com/vsaiuttam/caller-agent",
+    "featured": true,
+    "badge": "New"
+  },
+  {
+    "title": "Cartesian Suite: Karta & Fusion Studio",
+    "kind": "Personal · Live",
+    "year": "2026",
+    "description": "Voice agents that talk and do. Karta drives your desktop from Hindi, Telugu or English speech, behind a policy engine, a kill switch and a red-team suite. Fusion Studio runs Oracle Fusion implementations end to end, from setups and regression tests to reports and cutover, in a Git-like repo.",
+    "tags": [
+      "Go",
+      "Agents",
+      "Indic NLP",
+      "MCP",
+      "Oracle Fusion",
+      "Noise protocol"
+    ],
+    "url": "https://cartesian-suite.vercel.app",
+    "featured": true
+  },
+  {
+    "title": "Multi-Agent Finance Automation Platform",
+    "kind": "Enterprise · CES",
+    "description": "LangGraph state machines and CrewAI agents automating Credit Memo, Rebill and AP workflows. A supervisor agent routes work to an invoice validator, approvals and notifications with human-in-the-loop checks, over 8 Oracle Fusion Receivables REST APIs, cutting manual processing time by 70%.",
+    "tags": [
+      "LangGraph",
+      "CrewAI",
+      "FastAPI",
+      "Python",
+      "Oracle Fusion REST"
+    ],
+    "featured": true
+  },
+  {
+    "title": "Ask Badger: Enterprise RAG Assistant",
+    "kind": "Enterprise · CES",
+    "description": "Production RAG over 10K+ enterprise documents with hybrid vector and keyword retrieval on Azure AI Search. The LangGraph agent decides when to search, synthesise or escalate, reaching 88% answer accuracy, scored nightly by an LLM-as-judge pipeline.",
+    "tags": [
+      "LangChain",
+      "LangGraph",
+      "Azure AI Search",
+      "FastAPI",
+      "Evals"
+    ],
+    "featured": true
+  },
+  {
+    "title": "AI Vendor Onboarding Agent",
+    "kind": "Enterprise · CES",
+    "description": "End-to-end vendor onboarding with N8n orchestrating email triggers, forms, approvals and Oracle Fusion updates, while LangChain agents classify documents and run compliance checks. Onboarding went from 5 days to same-day for 200+ vendors a month.",
+    "tags": [
+      "N8n",
+      "Copilot Studio",
+      "LangChain",
+      "FastAPI"
+    ]
+  },
+  {
+    "title": "Oracle Fusion Copilot Agents: Suite of 8",
+    "kind": "Enterprise · CES",
+    "description": "Eight enterprise copilots across Finance, Procurement, HR and Customer Service in Microsoft Copilot Studio, with adaptive cards, dialog management, guardrails and entity extraction, each backed by a FastAPI microservice on Azure.",
+    "tags": [
+      "Copilot Studio",
+      "LangGraph",
+      "FastAPI",
+      "Oracle REST APIs",
+      "Azure"
+    ]
+  },
+  {
+    "title": "AI Evals & Agent Testing Framework",
+    "kind": "Enterprise · CES",
+    "description": "A reusable evals framework with 500+ curated test cases, LLM-as-judge rubrics and GitHub Actions regression runs, so every prompt or model change is measured before it ships.",
+    "tags": [
+      "Python",
+      "LangChain",
+      "OpenAI Evals",
+      "CI/CD"
+    ]
+  }
+]

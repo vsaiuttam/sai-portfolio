@@ -1,0 +1,21 @@
+{
+  "name": "Sai Uttam Dutt Veeravajhula",
+  "shortName": "Sai Uttam",
+  "seal": "साई",
+  "title": "Senior Associate Consultant",
+  "company": "CES Limited",
+  "roles": ["AI Engineer", "Agentic AI", "LLM Systems", "Oracle Fusion + AI"],
+  "tagline": "I build AI agents that do real enterprise work: multi-agent pipelines, RAG and evals, wired into Oracle Fusion ERP so finance and procurement teams get hours back.",
+  "location": "Hyderabad, India",
+  "email": "saiuttam2000@gmail.com",
+  "githubUsername": "vsaiuttam",
+  "site": "https://sai-uttam.vercel.app",
+  "photo": "/sai.webp",
+  "photoFallback": "/sai.jpg",
+  "photoAlt": "Sai Uttam Dutt Veeravajhula in a navy suit, smiling, glass office building behind",
+  "links": {
+    "github": "https://github.com/vsaiuttam",
+    "linkedin": "https://www.linkedin.com/in/saiuttam-v",
+    "resumePdf": "/Sai-Uttam-Dutt-Veeravajhula-Resume.pdf"
+  }
+}

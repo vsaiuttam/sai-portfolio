@@ -1,0 +1,18 @@
+[
+  {
+    "role": "Senior Associate Consultant · AI Engineer",
+    "company": "CES Limited",
+    "location": "Hyderabad",
+    "start": "Jul 2024",
+    "end": "Present",
+    "points": [
+      "Designed and deployed 8+ enterprise AI agents using LangGraph, Microsoft Copilot Studio and Oracle AI Agent Studio, cutting manual effort in finance and procurement workflows by ~60%.",
+      "Built multi-agent pipelines with LangChain and CrewAI for invoice processing, vendor onboarding and customer support triage.",
+      "Developed N8n workflows linking AI agents to Oracle Fusion ERP, email triggers and approvals across 5+ business processes.",
+      "Built an AI evals framework across 200+ test cases, improving agent reliability by 35% through iterative prompt optimisation.",
+      "Built 5+ FastAPI microservices exposing agents as REST endpoints, plus RAG apps on Azure AI Foundry and AI Search over 10K+ documents.",
+      "Delivered 15+ Oracle Fusion REST/SOAP integrations via OIC and migrated 30+ BI Publisher reports from EBS to Fusion Cloud."
+    ],
+    "tags": ["LangGraph", "CrewAI", "Copilot Studio", "Oracle AI Agent Studio", "FastAPI", "OIC", "Azure AI Foundry"]
+  }
+]

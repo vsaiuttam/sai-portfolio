@@ -1,0 +1,13 @@
+{
+  "paragraphs": [
+    "I'm an AI engineer with 2+ years building production-grade agentic systems: multi-agent pipelines, LLM-powered applications and the evals that keep them honest. Most of my work lives where AI meets the enterprise back office, inside Oracle Fusion ERP.",
+    "At CES Limited I design agents with LangGraph, CrewAI, Microsoft Copilot Studio and Oracle AI Agent Studio that automate finance, procurement and customer workflows, then expose them as FastAPI microservices and wire them into Fusion through REST, SOAP and Oracle Integration Cloud.",
+    "Outside work I build voice agents for India: Samvaad, an AI caller that holds real phone conversations, and Karta, a desktop agent you can talk to in Hindi, Telugu and English."
+  ],
+  "stats": [
+    { "value": "8+", "label": "enterprise AI agents shipped" },
+    { "value": "~60%", "label": "less manual effort in finance & procurement" },
+    { "value": "15+", "label": "Oracle Fusion integrations via OIC" },
+    { "value": "10K+", "label": "documents behind production RAG" }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "groups": [
+    { "name": "AI Agents", "items": ["LangChain", "LangGraph", "CrewAI", "Microsoft Copilot Studio", "Oracle AI Agent Studio", "MCP"] },
+    { "name": "LLM & RAG", "items": ["Claude API", "OpenAI GPT-4o", "Azure OpenAI", "Prompt Engineering", "Tool Calling", "RAG", "AI Evals", "RLHF"] },
+    { "name": "Automation", "items": ["N8n", "Agentic Workflows", "Human-in-the-Loop", "Guardrails", "Multi-Agent Orchestration"] },
+    { "name": "Backend & Tools", "items": ["Python", "FastAPI", "REST", "SOAP", "PL/SQL", "SQL", "Microservices", "Docker", "Git"] },
+    { "name": "Cloud & Oracle", "items": ["Azure AI Foundry", "Azure AI Search", "OCI AI Services", "Oracle Integration Cloud (OIC3)", "Oracle Fusion ERP", "BI Publisher", "OTBI", "VBCS", "Oracle Vector DB"] }
+  ],
+  "certifications": ["Oracle Integration Cloud (OIC)", "Oracle AI Agent Studio", "Oracle Vector Database", "Claude AI Architect"],
+  "education": {
+    "degree": "B.Tech, Computer Science Engineering",
+    "school": "Avanthi Institute of Engineering and Technology",
+    "years": "2019 – 2023"
+  }
+}
