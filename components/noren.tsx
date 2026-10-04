@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { sound } from "@/lib/sound";
 
 /*
   Moving between pages means walking through a noren, the split indigo
@@ -61,6 +62,7 @@ export default function Noren() {
       // Mount the curtain raised, then let it fall on the next frame.
       go("ready");
       requestAnimationFrame(() => requestAnimationFrame(() => go("down")));
+      sound.norenDown(DROP + STAGGER * 2);
       later(() => {
         if (target.current) router.push(target.current.href, { scroll: false });
         // If the page never changes (an error), lift the curtain anyway.
@@ -74,6 +76,7 @@ export default function Noren() {
   const lift = () => {
     if (!target.current?.hash) window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
     go("up");
+    sound.norenUp(LIFT);
     later(() => {
       target.current = null;
       go("idle");

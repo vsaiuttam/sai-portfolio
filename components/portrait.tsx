@@ -3,22 +3,25 @@
 import { useEffect, useRef, useState } from "react";
 import profile from "@/data/profile.json";
 import { sound } from "@/lib/sound";
+import { drawSprite, SPRITE } from "@/lib/sprite";
 import { Tanzaku } from "./ui";
 
 /*
-  The portrait has a pixel-art twin. Tapping it (変身, henshin, "transform")
-  plays like an old game cartridge: the photo crunches down into big
-  pixels, the window's tiles flip over in a diagonal wave to show the other
-  side, then the picture sharpens back. Soft scanlines come and go with it.
+  The portrait has a second self: a pixel-art character in a straw hat
+  (lib/sprite.ts). Tapping the window (変身, henshin, "transform") plays
+  like an old game cartridge: the photo crunches into big pixels, the tiles
+  flip over in a diagonal wave to reveal the character, and a little
+  fanfare plays. Once there, the character blinks, breathes and now and
+  then tips its hat. Tapping again plays it all back to the photo.
 */
 
 const TILES = 8; // tiles per side while flipping
 const FLIP_RES = TILES * 2; // pixels per side mid-transition (2×2 per tile)
 const START_RES = 44; // pixels per side as the crunch begins
+const GRID = SPRITE.length; // the character's pixels per side
 
-// Timeline (ms).
 const CRUNCH = 380;
-const WAVE_STEP = 42; // delay between diagonals
+const WAVE_STEP = 42;
 const FLIP = 300;
 const FLIP_END = CRUNCH + (TILES * 2 - 2) * WAVE_STEP + FLIP;
 const END = FLIP_END + 420;
@@ -26,31 +29,66 @@ const END = FLIP_END + 420;
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
 
-type Source = { img: HTMLImageElement; sx: number; sy: number; s: number };
+type Source = { img: CanvasImageSource; sx: number; sy: number; s: number; crisp: boolean };
 
 export default function Portrait() {
   const [twin, setTwin] = useState(false);
   const [playing, setPlaying] = useState(false);
   const photoRef = useRef<HTMLImageElement>(null);
-  const twinRef = useRef<HTMLImageElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const charRef = useRef<HTMLCanvasElement>(null);
+  const flipRef = useRef<HTMLCanvasElement>(null);
   const raf = useRef(0);
-  useEffect(() => () => cancelAnimationFrame(raf.current), []);
+  const idleRaf = useRef(0);
+  useEffect(
+    () => () => {
+      cancelAnimationFrame(raf.current);
+      cancelAnimationFrame(idleRaf.current);
+    },
+    [],
+  );
 
-  // The square of each image that the round window shows.
-  const source = (img: HTMLImageElement, isPhoto: boolean): Source => {
-    const w = img.naturalWidth,
-      h = img.naturalHeight;
-    const s = Math.min(w, h);
-    return { img, sx: (w - s) / 2, sy: isPhoto ? (h - s) * 0.14 : (h - s) / 2, s };
+  // The character at rest, one canvas pixel per sprite pixel.
+  const still = () => {
+    const c = document.createElement("canvas");
+    c.width = c.height = GRID;
+    drawSprite(c.getContext("2d")!, 1);
+    return c;
   };
 
-  // Downsample a source to n×n pixels.
+  // The living character: blinks, breathes, tips its hat now and then.
+  useEffect(() => {
+    const c = charRef.current;
+    if (!c) return;
+    const ctx = c.getContext("2d")!;
+    const px = 8;
+    c.width = c.height = GRID * px;
+    drawSprite(ctx, px);
+    if (!twin || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t0 = performance.now();
+    let last = "";
+    const loop = (now: number) => {
+      const t = (now - t0) / 1000;
+      const blink = t % 3.7 > 3.55 || (t % 11 > 10.4 && t % 11 < 10.55);
+      const bob = Math.sin(t * 2.4) > 0.55 ? 1 : 0;
+      const cycle = t % 9;
+      const hat = cycle > 5 && cycle < 6 ? (cycle < 5.12 || cycle > 5.88 ? 1 : cycle < 5.25 || cycle > 5.75 ? 2 : 3) : 0;
+      const key = `${blink}${bob}${hat}`;
+      if (key !== last) {
+        last = key;
+        ctx.clearRect(0, 0, c.width, c.height);
+        drawSprite(ctx, px, { blink, bob, hat });
+      }
+      idleRaf.current = requestAnimationFrame(loop);
+    };
+    idleRaf.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(idleRaf.current);
+  }, [twin]);
+
   const shrink = (src: Source, n: number, into?: HTMLCanvasElement) => {
     const c = into ?? document.createElement("canvas");
     c.width = c.height = n;
     const x = c.getContext("2d")!;
-    x.imageSmoothingEnabled = true;
+    x.imageSmoothingEnabled = !src.crisp;
     x.drawImage(src.img, src.sx, src.sy, src.s, src.s, 0, 0, n, n);
     return c;
   };
@@ -58,15 +96,21 @@ export default function Portrait() {
   const toggle = () => {
     if (playing) return;
     const photo = photoRef.current,
-      pix = twinRef.current,
-      canvas = canvasRef.current;
+      canvas = flipRef.current;
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce || !photo?.complete || !pix?.complete || !canvas || !photo.naturalWidth || !pix.naturalWidth) {
+    const goingToChar = !twin;
+    if (reduce || !photo?.complete || !photo.naturalWidth || !canvas) {
+      sound.land(goingToChar);
       setTwin((v) => !v);
       return;
     }
-    const from = twin ? source(pix, false) : source(photo, true);
-    const to = twin ? source(photo, true) : source(pix, false);
+    const pw = photo.naturalWidth,
+      ph = photo.naturalHeight,
+      ps = Math.min(pw, ph);
+    const photoSrc: Source = { img: photo, sx: (pw - ps) / 2, sy: (ph - ps) * 0.14, s: ps, crisp: false };
+    const charSrc: Source = { img: still(), sx: 0, sy: 0, s: GRID, crisp: true };
+    const from = goingToChar ? photoSrc : charSrc;
+    const to = goingToChar ? charSrc : photoSrc;
 
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     const W = Math.round(canvas.getBoundingClientRect().width * dpr);
@@ -78,11 +122,14 @@ export default function Portrait() {
     const tile = W / TILES;
     const cell = FLIP_RES / TILES;
 
-    // The picture with a blocky copy faded over it; at 0 it's the clear image.
-    const blocky = (src: Source, amount: number) => {
-      ctx.imageSmoothingEnabled = true;
+    const clear = (src: Source) => {
+      ctx.imageSmoothingEnabled = !src.crisp;
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(src.img, src.sx, src.sy, src.s, src.s, 0, 0, W, W);
+    };
+    // The picture with a blocky copy faded over it; at 0 it's the clear image.
+    const blocky = (src: Source, amount: number) => {
+      clear(src);
       if (amount <= 0) return;
       const n = Math.round(START_RES + (FLIP_RES - START_RES) * amount);
       ctx.globalAlpha = Math.min(1, amount * 2.4);
@@ -90,13 +137,11 @@ export default function Portrait() {
       ctx.drawImage(shrink(src, n, scratch), 0, 0, W, W);
       ctx.globalAlpha = 1;
     };
-
     const scanlines = (k: number) => {
       if (k <= 0) return;
       ctx.fillStyle = `rgba(14, 19, 33, ${0.18 * k})`;
       for (let y = 0; y < W; y += 3 * dpr) ctx.fillRect(0, y, W, dpr);
     };
-
     // Tiles flip top-over-bottom, in a wave running corner to corner.
     const flip = (t: number) => {
       const open = Math.min(clamp01((t - CRUNCH) / 90), clamp01((FLIP_END - t) / 90));
@@ -122,7 +167,9 @@ export default function Portrait() {
       }
     };
 
-    sound.blips(TILES * 2 - 1, CRUNCH, WAVE_STEP);
+    sound.crunch(CRUNCH);
+    sound.blips(TILES * 2 - 1, CRUNCH, WAVE_STEP, goingToChar);
+    sound.land(goingToChar, FLIP_END);
     setPlaying(true);
     const t0 = performance.now();
     const frame = (now: number) => {
@@ -137,11 +184,9 @@ export default function Portrait() {
         scanlines(1);
       } else if (t < END) {
         const p = ease(clamp01((t - FLIP_END) / (END - FLIP_END)));
-        // The pixel twin is already pixel art: it lands crisp.
-        if (to.img === pix) {
-          ctx.imageSmoothingEnabled = false;
-          ctx.drawImage(pix, 0, 0, W, W);
-        } else blocky(to, 1 - p);
+        // The character is pixel art already: it lands crisp.
+        if (to.crisp) clear(to);
+        else blocky(to, 1 - p);
         scanlines(1 - p);
       } else {
         setTwin((v) => !v);
@@ -154,21 +199,21 @@ export default function Portrait() {
   };
 
   return (
-    <div className="portrait" data-rise="" style={{ animationDelay: "140ms" }}>
+    <div className="portrait" data-twin={twin} data-rise="" style={{ animationDelay: "140ms" }}>
       <span className="ring" aria-hidden="true" />
       <button
         type="button"
         className="marumado"
         onClick={toggle}
         aria-pressed={twin}
-        aria-label={`Portrait of ${profile.name}. Tap to switch between the photo and a pixel-art version.`}
+        aria-label={`Portrait of ${profile.name}. Tap to switch between the photo and a pixel-art character.`}
       >
         <picture>
           <source srcSet={profile.photo} type="image/webp" />
           <img ref={photoRef} src={profile.photoFallback} alt="" width={720} height={960} fetchPriority="high" style={{ opacity: twin ? 0 : 1 }} />
         </picture>
-        <img ref={twinRef} className="twin" src="/sai-pixel.png" alt="" width={512} height={512} decoding="async" style={{ opacity: twin ? 1 : 0 }} />
-        <canvas ref={canvasRef} className="flipper" aria-hidden="true" style={{ visibility: playing ? "visible" : "hidden" }} />
+        <canvas ref={charRef} className="twin" aria-hidden="true" style={{ opacity: twin ? 1 : 0 }} />
+        <canvas ref={flipRef} className="flipper" aria-hidden="true" style={{ visibility: playing ? "visible" : "hidden" }} />
       </button>
       <Tanzaku />
       <span className="henshin" aria-hidden="true">

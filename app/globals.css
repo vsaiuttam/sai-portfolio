@@ -257,12 +257,153 @@ a {
   height: 1.05rem;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.mobile-menu {
+  display: none;
+}
+.mobile-sheet {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  top: calc(100% + 0.4rem);
+  display: grid;
+  padding: 0.4rem;
+  border-radius: var(--radius);
+  background: rgb(var(--card));
+  border: 1px solid rgb(var(--ink) / 0.12);
+  box-shadow: 0 24px 40px -20px rgb(var(--shadow) / 0.45);
+  animation: sheet 0.22s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.mobile-sheet a {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  padding: 0.75rem 0.8rem;
+  border-radius: 6px;
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+}
+.mobile-sheet a:hover,
+.mobile-sheet a[aria-current="true"] {
+  background: rgb(var(--ai) / 0.1);
+}
+@keyframes sheet {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
 @media (max-width: 720px) {
   .nav {
     display: none;
   }
   .header-inner {
+    position: relative;
     justify-content: space-between;
+  }
+  .mobile-menu {
+    display: block;
+  }
+}
+
+/* ---------- Shortcuts dialog and toast ---------- */
+
+.shortcuts {
+  width: min(26rem, calc(100vw - 2rem));
+  padding: 0;
+  border: 1px solid rgb(var(--ink) / 0.14);
+  border-top: 3px solid rgb(var(--ai));
+  border-radius: var(--radius);
+  background: rgb(var(--card));
+  color: rgb(var(--ink));
+  box-shadow: 0 30px 60px -20px rgb(var(--shadow) / 0.5);
+}
+.shortcuts::backdrop {
+  background: rgb(14 19 33 / 0.45);
+  backdrop-filter: blur(3px);
+}
+.shortcuts[open] {
+  animation: sheet 0.22s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.shortcuts-inner {
+  padding: 1.1rem 1.2rem 1.3rem;
+}
+.shortcuts-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+.shortcuts h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+}
+.shortcuts h2 span {
+  color: rgb(var(--ai));
+  margin-right: 0.3rem;
+}
+.shortcuts ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+  font-size: 0.9rem;
+}
+.shortcuts li {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgb(var(--ink-soft));
+}
+kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  padding: 0 0.4rem;
+  border-radius: 5px;
+  border: 1px solid rgb(var(--ink) / 0.2);
+  border-bottom-width: 2px;
+  background: rgb(var(--paper));
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: rgb(var(--ink));
+  justify-self: start;
+}
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  z-index: 95;
+  transform: translateX(-50%);
+  padding: 0.55rem 1rem;
+  border-radius: 6px;
+  background: rgb(var(--ink));
+  color: rgb(var(--paper));
+  font-size: 0.85rem;
+  box-shadow: 0 12px 30px -10px rgb(var(--shadow) / 0.5);
+  animation: toast 1.6s ease both;
+}
+@keyframes toast {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  12%,
+  80% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
   }
 }
 
@@ -478,6 +619,9 @@ a {
   height: 22%;
   background: repeating-linear-gradient(0deg, rgb(var(--paper) / 0.18) 0 2px, transparent 2px 5px);
   pointer-events: none;
+}
+.portrait[data-twin="true"] .marumado::after {
+  opacity: 0;
 }
 .portrait .ring {
   position: absolute;
@@ -1249,9 +1393,51 @@ a {
 /* ---------- Footer ---------- */
 
 .footer {
-  padding: 2.5rem 0 3rem;
+  margin-top: 2rem;
+  padding: 2rem 0 2.5rem;
   font-size: 0.82rem;
   color: rgb(var(--ink-faint));
+  border-top: 1px solid rgb(var(--ink) / 0.08);
+}
+.footer-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.2rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 1px dashed rgb(var(--ink) / 0.12);
+  color: rgb(var(--ink));
+}
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+}
+.footer-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.85rem;
+  color: rgb(var(--ink-soft));
+  cursor: pointer;
+}
+.footer-link:hover {
+  color: rgb(var(--ai));
+}
+.footer-link svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+.footer-link kbd {
+  min-width: 1.2rem;
+  height: 1.2rem;
+  font-size: 0.65rem;
 }
 .footer-inner {
   display: flex;

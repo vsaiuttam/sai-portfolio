@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { sound } from "@/lib/sound";
+import { onSoundChange, setSoundOn, sound, soundOn } from "@/lib/sound";
 
 /*
   Karesansui, a dry garden you can play in.
@@ -38,29 +38,21 @@ export default function Garden() {
   const wrap = useRef<HTMLDivElement>(null);
   const cv = useRef<HTMLCanvasElement>(null);
   const [tool, setTool] = useState<Tool>("rake");
-  const [soundOn, setSoundOn] = useState(false);
+  const [soundOnState, setSoundOn_] = useState(true);
   const toolRef = useRef<Tool>("rake");
   const api = useRef<{ sweep: () => void }>({ sweep: () => {} });
 
   useEffect(() => {
     toolRef.current = tool;
   }, [tool]);
+  // Sound is site-wide (header button, M key); this button mirrors it.
   useEffect(() => {
-    try {
-      if (localStorage.getItem("garden-sound") === "on") {
-        setSoundOn(true);
-        sound.set(true); // the audio itself starts on the first tap in the garden
-      }
-    } catch {}
+    setSoundOn_(soundOn());
+    return onSoundChange(setSoundOn_);
   }, []);
   const toggleSound = () => {
-    const on = !soundOn;
-    setSoundOn(on);
-    sound.set(on);
-    try {
-      localStorage.setItem("garden-sound", on ? "on" : "off");
-    } catch {}
-    if (on) sound.knock();
+    setSoundOn(!soundOn());
+    if (soundOn()) sound.tick();
   };
 
   useEffect(() => {
@@ -103,6 +95,7 @@ export default function Garden() {
     let pointer: { x: number; y: number } | null = null;
     let drag: { stone: Stone; dx: number; dy: number; moved: boolean; x0: number; y0: number } | null = null;
     let leafT = 0;
+    let touched = -1e9; // when the visitor last played here (ms)
 
     const col: Record<string, number[]> = {};
     let dark = false;
@@ -744,7 +737,7 @@ export default function Garden() {
         if (u >= 1) {
           shishi.phase = "fill";
           shishi.wobble = 0.35;
-          sound.knock();
+          if (performance.now() - touched < 30000) sound.knock();
         }
       }
       for (const dr of drops) {
@@ -997,6 +990,7 @@ export default function Garden() {
 
     const onDown = (e: PointerEvent) => {
       const p = at(e);
+      touched = performance.now();
       pointer = p;
       if (hitCat(p.x, p.y)) return startle();
       if (hitShishi(p.x, p.y)) {
@@ -1140,7 +1134,7 @@ export default function Garden() {
 
   const current = TOOLS.find((x) => x.id === tool)!;
   return (
-    <div className="garden-wrap" data-rise="" style={{ animationDelay: "420ms" }}>
+    <div className="garden-wrap" id="garden" data-rise="" style={{ animationDelay: "420ms" }}>
       <div className="garden" ref={wrap} data-tool={tool}>
         <canvas ref={cv} role="img" aria-label="An interactive zen garden: rake the sand, set stones, scatter leaves. A cat visits now and then." />
       </div>
@@ -1160,9 +1154,9 @@ export default function Garden() {
             <b lang="ja">掃</b>
             <span>Sweep</span>
           </button>
-          <button type="button" className="gtool" aria-pressed={soundOn} onClick={toggleSound} title={soundOn ? "Sound off" : "Sound on"}>
+          <button type="button" className="gtool" aria-pressed={soundOnState} onClick={toggleSound} title={soundOnState ? "Sound off" : "Sound on"}>
             <b lang="ja">音</b>
-            <span>{soundOn ? "On" : "Off"}</span>
+            <span>{soundOnState ? "On" : "Off"}</span>
           </button>
         </div>
       </div>

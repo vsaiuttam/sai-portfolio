@@ -1,17 +1,29 @@
 /**
- * Garden sounds, synthesised with Web Audio (no audio files): the bamboo
- * knock of the shishi-odoshi, a cat's meow, a stone set down, the chime of
- * a raked ring, the swish of the rake, leaves, and a broom.
+ * Site sounds, synthesised with Web Audio (no audio files): the noren
+ * curtain, the portrait's transformation, the theme switch, copying the
+ * email, and the garden (rake, rings, stones, leaves, broom, the
+ * shishi-odoshi's knock, the cat).
  *
- * Off by default. The AudioContext is only created after the visitor turns
- * sound on (a click), which is what browsers require.
+ * On by default and remembered per visitor (header button or the M key).
+ * Every sound answers something the visitor did, and the AudioContext is
+ * only created inside that click or key press, as browsers require.
  */
 
 let ac: AudioContext | null = null;
 let master: GainNode | null = null;
 let noiseBuf: AudioBuffer | null = null;
-let enabled = false;
+let enabled = true;
+let loaded = false;
 let lastSwish = 0;
+const listeners = new Set<(on: boolean) => void>();
+
+function load() {
+  if (loaded || typeof window === "undefined") return;
+  loaded = true;
+  try {
+    enabled = localStorage.getItem("sound") !== "off";
+  } catch {}
+}
 
 function ensure(): AudioContext | null {
   if (typeof window === "undefined") return null;
@@ -74,23 +86,41 @@ function noise(filter: BiquadFilterType, freq: number, q: number, peak: number, 
   src.stop(t + attack + decay + 0.05);
 }
 
+export function soundOn() {
+  load();
+  return enabled;
+}
+
+export function setSoundOn(on: boolean) {
+  load();
+  enabled = on;
+  try {
+    localStorage.setItem("sound", on ? "on" : "off");
+  } catch {}
+  if (on) ensure();
+  listeners.forEach((fn) => fn(on));
+}
+
+export function onSoundChange(fn: (on: boolean) => void) {
+  listeners.add(fn);
+  return () => {
+    listeners.delete(fn);
+  };
+}
+
 export const sound = {
   get on() {
-    return enabled;
-  },
-  set(on: boolean) {
-    enabled = on;
-    if (on) ensure();
+    return soundOn();
   },
   /** Shishi-odoshi: hollow bamboo striking stone. */
   knock() {
-    if (!enabled) return;
+    if (!soundOn()) return;
     tone("sine", 900, 700, 0.5, 0.002, 0.12);
     tone("triangle", 420, 300, 0.25, 0.002, 0.18);
     noise("bandpass", 1900, 6, 0.35, 0.001, 0.05);
   },
   meow() {
-    if (!enabled) return;
+    if (!soundOn()) return;
     const c = ensure();
     if (!c || !master) return;
     const t = c.currentTime;
@@ -124,39 +154,81 @@ export const sound = {
   },
   /** A stone set down on sand. */
   thunk() {
-    if (!enabled) return;
+    if (!soundOn()) return;
     tone("sine", 140, 55, 0.5, 0.004, 0.22);
     noise("lowpass", 500, 0.7, 0.25, 0.002, 0.1);
   },
   /** A ring raked around a pebble: a small bell. */
   chime() {
-    if (!enabled) return;
+    if (!soundOn()) return;
     tone("sine", 1046, 1040, 0.16, 0.004, 1.3);
     tone("sine", 1568, 1560, 0.08, 0.004, 1.0, 0.03);
   },
   /** The rake through gravel; throttled so a long stroke is a texture. */
   swish(amount: number) {
-    if (!enabled) return;
+    if (!soundOn()) return;
     const now = performance.now();
     if (now - lastSwish < 70) return;
     lastSwish = now;
     noise("bandpass", 2600, 0.9, Math.min(0.22, 0.05 + amount * 0.012), 0.01, 0.09);
   },
   rustle() {
-    if (!enabled) return;
+    if (!soundOn()) return;
     noise("highpass", 3200, 0.7, 0.12, 0.01, 0.16);
   },
   /** Square-wave blips climbing a pentatonic scale, one per wave of tiles. */
-  blips(count: number, startMs: number, stepMs: number) {
-    if (!enabled) return;
+  blips(count: number, startMs: number, stepMs: number, up = true) {
+    if (!soundOn()) return;
     const scale = [523, 587, 659, 784, 880, 1047, 1175, 1319, 1568, 1760];
     for (let i = 0; i < count; i++) {
-      const f = scale[Math.min(scale.length - 1, Math.round((i / Math.max(1, count - 1)) * (scale.length - 1)))];
+      const j = Math.round((i / Math.max(1, count - 1)) * (scale.length - 1));
+      const f = scale[up ? j : scale.length - 1 - j];
       tone("square", f, f, 0.05, 0.004, 0.06, (startMs + i * stepMs) / 1000);
     }
   },
+  /** Switching on: a small wooden tick. */
+  tick() {
+    if (!soundOn()) return;
+    tone("triangle", 1400, 1100, 0.12, 0.002, 0.05);
+  },
+  /** The theme switch: a click, then a soft tone, higher for light. */
+  theme(dark: boolean) {
+    if (!soundOn()) return;
+    noise("highpass", 2500, 0.8, 0.2, 0.001, 0.025);
+    tone("sine", dark ? 330 : 494, dark ? 262 : 587, 0.12, 0.01, 0.35, 0.04);
+  },
+  /** A hanko-like stamp, for copying the email. */
+  stamp() {
+    if (!soundOn()) return;
+    tone("sine", 180, 90, 0.35, 0.003, 0.12);
+    noise("bandpass", 1200, 1.2, 0.12, 0.002, 0.06);
+  },
+  /** The noren dropping: cloth falling through air, then the rod settling. */
+  norenDown(ms: number) {
+    if (!soundOn()) return;
+    noise("bandpass", 2400, 0.7, 0.22, 0.05, ms / 1000, 500);
+    tone("triangle", 260, 200, 0.22, 0.003, 0.16, ms / 1000);
+    noise("bandpass", 900, 4, 0.18, 0.002, 0.05);
+  },
+  /** Passing through: the cloth swept aside, rising. */
+  norenUp(ms: number) {
+    if (!soundOn()) return;
+    noise("bandpass", 600, 0.7, 0.2, 0.06, ms / 1000, 3000);
+  },
+  /** The portrait crunching into pixels: a bit-crushed falling chirp. */
+  crunch(ms: number) {
+    if (!soundOn()) return;
+    tone("square", 1200, 180, 0.07, 0.01, ms / 1000);
+    noise("lowpass", 3000, 0.8, 0.08, 0.01, ms / 1000, 400);
+  },
+  /** The new picture landing: a three-note fanfare (falling when undone). */
+  land(up: boolean, delayMs = 0) {
+    if (!soundOn()) return;
+    const notes = up ? [784, 988, 1319] : [988, 784, 587];
+    notes.forEach((f, i) => tone("square", f, f, 0.07, 0.004, i === 2 ? 0.28 : 0.08, delayMs / 1000 + i * 0.09));
+  },
   broom() {
-    if (!enabled) return;
+    if (!soundOn()) return;
     noise("bandpass", 700, 0.8, 0.18, 0.08, 1.1, 2600);
   },
 };

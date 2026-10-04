@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono, Zen_Old_Mincho } from "next/font/google";
 import profile from "@/data/profile.json";
 import { Enso, InkFilter } from "@/components/ui";
-import { Nav, RevealObserver, ThemeToggle } from "@/components/client";
+import { MobileMenu, Nav, RevealObserver, Shortcuts, ShortcutsButton, SoundToggle, ThemeToggle } from "@/components/client";
+import { IconGithub, IconLinkedin, IconMail } from "@/components/icons";
 import Noren from "@/components/noren";
 import "./globals.css";
 
@@ -25,9 +26,8 @@ export const metadata: Metadata = {
     title: `${profile.name} · AI Engineer`,
     description,
     url: "/",
-    images: [{ url: "/sai-square.jpg", width: 400, height: 400, alt: profile.name }],
   },
-  twitter: { card: "summary", title: `${profile.name} · AI Engineer`, description, images: ["/sai-square.jpg"] },
+  twitter: { card: "summary_large_image", title: `${profile.name} · AI Engineer`, description },
   alternates: { canonical: "/" },
 };
 
@@ -73,21 +73,49 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <span>{profile.shortName}</span>
               </a>
               <Nav />
-              <ThemeToggle />
+              <div className="header-actions">
+                <SoundToggle />
+                <ThemeToggle />
+                <MobileMenu />
+              </div>
             </div>
           </header>
           {children}
           <footer className="footer">
-            <div className="wrap footer-inner">
-              <span>
-                © {new Date().getFullYear()} {profile.name} · Hyderabad
-              </span>
-              <span lang="ja" className="footer-ja">
-                一期一会 · <span lang="en">every meeting, once in a lifetime</span>
-              </span>
+            <div className="wrap">
+              <div className="footer-top">
+                <a href="/" className="brand">
+                  <Enso size={1.6} />
+                  <span>{profile.name}</span>
+                </a>
+                <nav className="footer-links" aria-label="Elsewhere">
+                  <a href={`mailto:${profile.email}`} className="footer-link">
+                    <IconMail /> Email
+                  </a>
+                  <a href={profile.links.linkedin} className="footer-link" target="_blank" rel="noopener noreferrer">
+                    <IconLinkedin /> LinkedIn
+                  </a>
+                  <a href={profile.links.github} className="footer-link" target="_blank" rel="noopener noreferrer">
+                    <IconGithub /> GitHub
+                  </a>
+                  <a href="/resume" className="footer-link">
+                    Resume
+                  </a>
+                  <ShortcutsButton />
+                </nav>
+              </div>
+              <div className="footer-inner">
+                <span>
+                  © {new Date().getFullYear()} {profile.name} · {profile.location}
+                </span>
+                <span lang="ja" className="footer-ja">
+                  一期一会 · <span lang="en">every meeting, once in a lifetime</span>
+                </span>
+              </div>
             </div>
           </footer>
           <Noren />
+          <Shortcuts />
         <RevealObserver />
       </body>
     </html>

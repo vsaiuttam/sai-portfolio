@@ -1,0 +1,32 @@
+# Sai Uttam Dutt Veeravajhula
+
+> Senior Associate Consultant and AI Engineer at CES Limited, Hyderabad, India. Builds production agentic AI systems, multi-agent pipelines, RAG and evals, and integrates them with Oracle Fusion ERP.
+
+- Site: https://sai-uttam.vercel.app
+- Resume (web): https://sai-uttam.vercel.app/resume
+- Resume (PDF): https://sai-uttam.vercel.app/Sai-Uttam-Dutt-Veeravajhula-Resume.pdf
+- GitHub: https://github.com/vsaiuttam
+- LinkedIn: https://www.linkedin.com/in/saiuttam-v
+- Email: saiuttam2000@gmail.com
+
+## Experience
+
+- Senior Associate Consultant · AI Engineer, CES Limited (Jul 2024 – present): 8+ enterprise AI agents with LangGraph, Microsoft Copilot Studio and Oracle AI Agent Studio (~60% less manual effort in finance and procurement); multi-agent pipelines with LangChain and CrewAI; N8n workflows into Oracle Fusion ERP; an evals framework of 200+ cases (+35% reliability); 5+ FastAPI microservices; RAG on Azure AI Foundry and AI Search over 10K+ documents; 15+ Oracle Fusion REST/SOAP integrations via OIC; 30+ BI Publisher reports migrated from EBS to Fusion Cloud.
+
+## Projects
+
+- Samvaad: AI voice agents that place outbound calls, hold a natural conversation and write what was agreed to calendar and records. https://frontend-nu-blond-93.vercel.app
+- Cartesian Suite (Karta and Fusion Studio): a voice-first desktop agent for Hindi, Telugu and English with a policy engine and kill switch; and end-to-end Oracle Fusion implementation agents. https://cartesian-suite.vercel.app
+- Multi-Agent Finance Automation Platform (LangGraph, CrewAI, FastAPI, Oracle Fusion Receivables): -70% manual processing time.
+- Ask Badger, an enterprise RAG assistant (Azure AI Search, LangGraph): 88% answer accuracy, nightly LLM-as-judge evals.
+- AI Vendor Onboarding Agent (N8n, Copilot Studio, LangChain): onboarding from 5 days to same-day for 200+ vendors a month.
+- Oracle Fusion Copilot Agents, a suite of 8 (Copilot Studio, FastAPI on Azure).
+- AI Evals & Agent Testing Framework: 500+ cases, LLM-as-judge rubrics, CI regression runs.
+
+## Skills
+
+AI agents (LangChain, LangGraph, CrewAI, Copilot Studio, Oracle AI Agent Studio, MCP); LLMs and RAG (Claude API, GPT-4o, Azure OpenAI, tool calling, evals); automation (N8n, human-in-the-loop, guardrails); backend (Python, FastAPI, REST, SOAP, PL/SQL, Docker); cloud and Oracle (Azure AI Foundry, AI Search, OCI AI, OIC3, Oracle Fusion ERP, BI Publisher, OTBI, VBCS, Oracle Vector DB).
+
+## Certifications and education
+
+Oracle Integration Cloud, Oracle AI Agent Studio, Oracle Vector Database, Claude AI Architect. B.Tech in Computer Science Engineering, Avanthi Institute of Engineering and Technology (2019–2023).

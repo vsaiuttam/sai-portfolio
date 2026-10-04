@@ -4,11 +4,16 @@ Personal site with a Japanese design: kinari cream and ai-zome indigo by day,
 an indigo night in dark mode, an ensō brush mark, section names in kanji set
 vertically (tategaki), a portrait seen through a round marumado window with a
 tanzaku strip (tap the photo, 変身: it crunches into pixels and flips, tile by
-tile, into a pixel-art twin),
+tile, into a hand-drawn pixel character of me in a straw hat, who blinks,
+breathes and tips the hat; lib/sprite.ts),
 and a karesansui zen garden to play in: rake the sand, stamp rings, set and
 drag stones, scatter momiji, sweep it clean, light the lantern, tip the
-shishi-odoshi, and meet the calico cat that wanders through. Sounds are
-synthesised in the browser and start muted. Moving between pages means passing through a noren curtain that
+shishi-odoshi, and meet the calico cat that wanders through.
+
+Every transition has sound, synthesised in the browser (lib/sound.ts): mute
+it with the header button or M. Press ? for keyboard shortcuts (D theme,
+1–5 sections, G garden, R resume, T top). The share card is generated
+(app/opengraph-image.tsx) and /llms.txt describes the site for AI crawlers. Moving between pages means passing through a noren curtain that
 carries 履歴書 (résumé) or 作品集 (portfolio).
 
 Built with Next.js (App Router), no UI or animation libraries.
